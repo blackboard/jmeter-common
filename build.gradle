@@ -14,7 +14,7 @@ dependencies {
 		compile group: 'org.apache.jmeter', name: 'ApacheJMeter_http', version:'2.10'
         testCompile group: 'junit', name: 'junit', version: '4.+'
 }
-
+/*
 uploadArchives {
   repositories
   {
@@ -23,4 +23,4 @@ uploadArchives {
         repository(url: "http://maven.pd.local/content/repositories/snapshots/")
      }
   }
-}
+}*/
