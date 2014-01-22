@@ -1,8 +1,10 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
+group 'blackboard.perf'
+
 version = '0.1-SNAPSHOT'
-repositories {        
+repositories {  
     mavenCentral()
 }
 dependencies {
@@ -11,4 +13,14 @@ dependencies {
 		compile group: 'org.apache.jmeter', name: 'ApacheJMeter_core', version:'2.10'
 		compile group: 'org.apache.jmeter', name: 'ApacheJMeter_http', version:'2.10'
         testCompile group: 'junit', name: 'junit', version: '4.+'
+}
+
+uploadArchives {
+  repositories
+  {
+     mavenDeployer
+     {
+        repository(url: "http://maven.pd.local/content/repositories/snapshots/")
+     }
+  }
 }
