@@ -5,4 +5,17 @@
 *.war
 *.ear
 
-.DS_Store
+# Gradle
+.gradle
+bin
+build
+target
+
+# eclipse
+.classpath
+.project
+.settings
+_eclipse_/
+
+# osx
+.DS_STORE
