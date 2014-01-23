@@ -39,14 +39,15 @@ task integTest(type: Test) {
    classpath = sourceSets.integTest.runtimeClasspath
 }
 
-
 uploadArchives {
-  repositories
-  {
-     mavenDeployer
-     {
-        repository(url: "http://maven.pd.local/content/repositories/snapshots/")
-//        authentication(userName: env['NEXUS_USERNAME'], password: env['NEXUS_PASSWORD'])
-     }
+  def nexusUsername = "$System.env.NEXUS_USERNAME".trim()
+  def nexusPassword = "$System.env.NEXUS_PASSWORD".trim()
+
+  repositories {
+    mavenDeployer {
+      repository ( url: 'http://maven.pd.local/content/repositories/snapshots' ) {
+        authentication ( userName: nexusUsername, password: nexusPassword )
+      }
+    }
   }
 }
