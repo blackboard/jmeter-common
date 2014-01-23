@@ -5,6 +5,8 @@ apply plugin: 'maven'
 group 'blackboard.perf'
 
 version = '0.1-SNAPSHOT'
+
+
 repositories {  
     mavenCentral()
 }
@@ -13,8 +15,30 @@ dependencies {
 		compile group: 'org.apache.jmeter', name: 'ApacheJMeter_java', version:'2.10'
 		compile group: 'org.apache.jmeter', name: 'ApacheJMeter_core', version:'2.10'
 		compile group: 'org.apache.jmeter', name: 'ApacheJMeter_http', version:'2.10'
-        testCompile group: 'junit', name: 'junit', version: '4.+'
+               
+        testCompile (
+       [group:'junit',name:'junit',version:'4.11'],
+       [group:'org.mockito', name:'mockito-all', version:'1.9.0']
+     )      
 }
+
+configurations {
+  integTestCompile.extendsFrom testCompile
+  integTestRuntime.extendsFrom testRuntime
+}
+
+sourceSets {
+        integTest {
+                  compileClasspath += main.output
+                  runtimeClasspath += main.output
+                }
+}
+
+task integTest(type: Test) {
+   testClassesDir = sourceSets.integTest.output.classesDir
+   classpath = sourceSets.integTest.runtimeClasspath
+}
+
 
 uploadArchives {
   repositories
@@ -22,6 +46,7 @@ uploadArchives {
      mavenDeployer
      {
         repository(url: "http://maven.pd.local/content/repositories/snapshots/")
+//        authentication(userName: env['NEXUS_USERNAME'], password: env['NEXUS_PASSWORD'])
      }
   }
 }

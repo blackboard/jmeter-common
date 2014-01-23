@@ -16,7 +16,7 @@ public class ConcurrentHttpRequestsSamplerGui extends AbstractSamplerGui
 {
 
   private static final long serialVersionUID = -8825258141220885722L;
-  public static String DEFAULT_URL1 = "http://www.baidu.com";
+  public static String DEFAULT_URL1 = "http://www.oracle.com/index.html";
   public static String DEFAULT_URL2 = "http://www.apache.org/";
   private static final String SAMPLER_LABEL = "jp@bb - Concurrent Http Requests Sampler";
   private static final String SAMPLER_COMMENT = "Blackboard Concurrent Request Sampler.";
