@@ -49,9 +49,20 @@ public class DetailCard extends JPanel
     panel.add( component, constraints );
   }
 
+  public String getNameField()
+  {
+    return _nameField.getText();
+  }
+  
   public String getName()
   {
     return _nameField.getText();
+    
+      }
+  
+  public void setNameField(String name)
+  {
+    _nameField.setText( name );
   }
 
   public UrlConfigGui getUrlConfigPanel()

@@ -61,4 +61,9 @@ public class ListDetailCardsMap
     Set<String> keys = _treeNodeNameToCardName.keySet();
     return keys;
   }
+
+  public boolean containsNode( String nodeName )
+  {
+    return _treeNodeNameToCardName.containsKey( nodeName );
+  }
 }

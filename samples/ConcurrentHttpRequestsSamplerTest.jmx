@@ -19,81 +19,118 @@
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">1</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
-        <longProp name="ThreadGroup.start_time">1390288901000</longProp>
-        <longProp name="ThreadGroup.end_time">1390288901000</longProp>
+        <longProp name="ThreadGroup.start_time">1392777972000</longProp>
+        <longProp name="ThreadGroup.end_time">1392777972000</longProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
       </ThreadGroup>
       <hashTree>
-        <blackboard.jmeter.sampler.ConcurrentHttpRequestsSampler guiclass="blackboard.jmeter.sampler.ConcurrentHttpRequestsSamplerGui" testclass="blackboard.jmeter.sampler.ConcurrentHttpRequestsSampler" testname="jp@bb - Concurrent Http Requests Sampler" enabled="true">
-          <stringProp name="TestPlan.comments">Blackboard Concurrent Request Sampler.</stringProp>
-          <stringProp name="URL1">http://www.oracle.com/index.html</stringProp>
-          <stringProp name="URL2">http://www.apache.org/</stringProp>
-        </blackboard.jmeter.sampler.ConcurrentHttpRequestsSampler>
-        <hashTree>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="sub Response Assertion" enabled="true">
-            <collectionProp name="Asserion.test_strings">
-              <stringProp name="-1894637172">oracle|apache</stringProp>
+        <blackboard.jmeter.sampler.ConcurrentHttpRequests.ConcurrentHttpRequestsSampler guiclass="blackboard.jmeter.sampler.ConcurrentHttpRequests.ConcurrentHttpRequestsSamplerGui" testclass="blackboard.jmeter.sampler.ConcurrentHttpRequests.ConcurrentHttpRequestsSampler" testname="jp@bb - Concurrent Http Requests Sampler" enabled="true">
+          <intProp name="result_option">0</intProp>
+          <elementProp name="List-Content" elementType="blackboard.jmeter.sampler.ConcurrentHttpRequests.config.MultipleHttpRequestsConfig">
+            <collectionProp name="MultipleHttpRequests.config">
+              <elementProp name="google" elementType="blackboard.jmeter.sampler.ConcurrentHttpRequests.config.HttpRequestConfig">
+                <stringProp name="HttpRequest.name">google</stringProp>
+                <elementProp name="HttpRequest.url.config" elementType="ConfigTestElement" guiclass="org.apache.jmeter.protocol.http.config.gui.UrlConfigGui" testclass="ConfigTestElement" testname="UrlConfigGui">
+                  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                    <collectionProp name="Arguments.arguments"/>
+                  </elementProp>
+                  <stringProp name="HTTPSampler.domain">www.google.com</stringProp>
+                  <stringProp name="HTTPSampler.port"></stringProp>
+                  <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+                  <stringProp name="HTTPSampler.response_timeout"></stringProp>
+                  <stringProp name="HTTPSampler.protocol"></stringProp>
+                  <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+                  <stringProp name="HTTPSampler.path"></stringProp>
+                  <stringProp name="HTTPSampler.method">GET</stringProp>
+                  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+                  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+                  <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+                </elementProp>
+              </elementProp>
+              <elementProp name="oracle" elementType="blackboard.jmeter.sampler.ConcurrentHttpRequests.config.HttpRequestConfig">
+                <stringProp name="HttpRequest.name">oracle</stringProp>
+                <elementProp name="HttpRequest.url.config" elementType="ConfigTestElement" guiclass="org.apache.jmeter.protocol.http.config.gui.UrlConfigGui" testclass="ConfigTestElement" testname="UrlConfigGui">
+                  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                    <collectionProp name="Arguments.arguments"/>
+                  </elementProp>
+                  <stringProp name="HTTPSampler.domain">www.oracle.com</stringProp>
+                  <stringProp name="HTTPSampler.port"></stringProp>
+                  <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+                  <stringProp name="HTTPSampler.response_timeout"></stringProp>
+                  <stringProp name="HTTPSampler.protocol"></stringProp>
+                  <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+                  <stringProp name="HTTPSampler.path"></stringProp>
+                  <stringProp name="HTTPSampler.method">GET</stringProp>
+                  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+                  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+                  <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+                </elementProp>
+              </elementProp>
+              <elementProp name="apache" elementType="blackboard.jmeter.sampler.ConcurrentHttpRequests.config.HttpRequestConfig">
+                <stringProp name="HttpRequest.name">apache</stringProp>
+                <elementProp name="HttpRequest.url.config" elementType="ConfigTestElement" guiclass="org.apache.jmeter.protocol.http.config.gui.UrlConfigGui" testclass="ConfigTestElement" testname="UrlConfigGui">
+                  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                    <collectionProp name="Arguments.arguments"/>
+                  </elementProp>
+                  <stringProp name="HTTPSampler.domain">www.apache.org</stringProp>
+                  <stringProp name="HTTPSampler.port"></stringProp>
+                  <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+                  <stringProp name="HTTPSampler.response_timeout"></stringProp>
+                  <stringProp name="HTTPSampler.protocol"></stringProp>
+                  <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+                  <stringProp name="HTTPSampler.path"></stringProp>
+                  <stringProp name="HTTPSampler.method">GET</stringProp>
+                  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+                  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+                  <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+                </elementProp>
+              </elementProp>
             </collectionProp>
-            <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
-            <boolProp name="Assertion.assume_success">false</boolProp>
-            <intProp name="Assertion.test_type">2</intProp>
-            <stringProp name="Assertion.scope">children</stringProp>
-          </ResponseAssertion>
-          <hashTree/>
-          <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="extract useful data from sub responses" enabled="true">
-            <stringProp name="filename"></stringProp>
-            <stringProp name="parameters"></stringProp>
-            <boolProp name="resetInterpreter">false</boolProp>
-            <stringProp name="script">import  org.apache.jmeter.samplers.SampleResult;
-
-SampleResult[] subs = prev.getSubResults() ; 
-counter = 1; 
-for(SampleResult sub: subs)
-{
-String response = sub.getResponseDataAsString();
-log.info(&quot;response:&quot;+response);
-log.info(&quot;*********************************************************&quot;);
-// Here we can extract useful data such as course_id/forum_id from sub response data for further usage.
-}
-</stringProp>
-          </BeanShellPostProcessor>
-          <hashTree/>
-        </hashTree>
+          </elementProp>
+          <stringProp name="TestPlan.comments">Blackboard Concurrent Request Sampler.</stringProp>
+        </blackboard.jmeter.sampler.ConcurrentHttpRequests.ConcurrentHttpRequestsSampler>
+        <hashTree/>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
       </hashTree>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
-        <boolProp name="ResultCollector.error_logging">false</boolProp>
-        <objProp>
-          <name>saveConfig</name>
-          <value class="SampleSaveConfiguration">
-            <time>true</time>
-            <latency>true</latency>
-            <timestamp>true</timestamp>
-            <success>true</success>
-            <label>true</label>
-            <code>true</code>
-            <message>true</message>
-            <threadName>true</threadName>
-            <dataType>true</dataType>
-            <encoding>false</encoding>
-            <assertions>true</assertions>
-            <subresults>true</subresults>
-            <responseData>false</responseData>
-            <samplerData>false</samplerData>
-            <xml>false</xml>
-            <fieldNames>false</fieldNames>
-            <responseHeaders>false</responseHeaders>
-            <requestHeaders>false</requestHeaders>
-            <responseDataOnError>false</responseDataOnError>
-            <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
-            <assertionsResultsToSave>0</assertionsResultsToSave>
-            <bytes>true</bytes>
-          </value>
-        </objProp>
-        <stringProp name="filename"></stringProp>
-      </ResultCollector>
-      <hashTree/>
     </hashTree>
   </hashTree>
 </jmeterTestPlan>

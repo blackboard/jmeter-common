@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -62,14 +63,28 @@ public class ListContentSplitPanel extends JSplitPane implements ActionListener,
   // Add New Request
   public void addNewRequest()
   {
+    // Add tree node in left Panel
     String treeNodeName = HTTP_REQUEST_PREFIX + _requestSeq;
+    treeNodeName = checkDupNodeName( treeNodeName );
 
     _listPanel.getTreePanel().addObject( treeNodeName );
 
-    // treeNodeName also works for cardname
+    //Add Card in right Panel
+    // treeNodeName may also work for cardname
+    String cardName = treeNodeName;
+    cardName = checkDupCardName( cardName );
     DetailCard panel = addNewDetailCard( treeNodeName );
     _map.add( treeNodeName, treeNodeName, panel );
     _requestSeq++;
+  }
+
+  private String checkDupCardName( String cardName )
+  {
+    while ( _map.containsNode( cardName ) )
+    {
+      cardName = cardName + UUID.randomUUID().toString().substring( 0, 6 );
+    }
+    return cardName;
   }
 
   private void setVisiblePanel( String cardName )
@@ -106,7 +121,10 @@ public class ListContentSplitPanel extends JSplitPane implements ActionListener,
     else if ( Constants.REMOVE_COMMAND.equals( command ) )
     {
       String selectedNodeName = _listPanel.getTreePanel().getCurrentNodeName();
-      removeRequest( selectedNodeName );
+      if ( selectedNodeName != null )
+      {
+        removeRequest( selectedNodeName );
+      }
     }
   }
 
@@ -121,14 +139,18 @@ public class ListContentSplitPanel extends JSplitPane implements ActionListener,
       String oldName = lastNode.toString();
       if ( lastPanel != null )
       {
-        String newName = lastPanel.getName();
-
-        lastNode.setUserObject( newName );
-        _map.changeTreeNodeName( oldName, newName );
+        String newName = lastPanel.getNameField();
+        if ( !newName.equals( oldName ) )
+        {
+          newName = checkDupNodeName( newName );
+          lastPanel.setNameField( newName );
+          lastNode.setUserObject( newName );
+          _map.changeTreeNodeName( oldName, newName );
+        }
       }
       _listPanel.getTreePanel().nodeChanged( lastNode );
     }
-    // Disply the new slected treeNode and its DetailCard in the right
+    // Display the new selected treeNode and its DetailCard in the right
     String selectedNodeName = _listPanel.getLastSelectedTreeNodeName();
     if ( selectedNodeName != null )
     {
@@ -136,9 +158,22 @@ public class ListContentSplitPanel extends JSplitPane implements ActionListener,
     }
   }
 
+  private String checkDupNodeName( String nodeName )
+  {
+    while ( _map.containsNode( nodeName ) )
+    {
+      nodeName = nodeName + UUID.randomUUID().toString().substring( 0, 6 );
+    }
+    return nodeName;
+  }
+
   // from GUI to Sampler
   public void modifyTestElement( TestElement sampler )
   {
+    // update the current selected TreeNode name from the DetailCard
+    // Refer to ActionRouter.performAction(...), Then invoke GuiPackage.getInstance().updateCurrentGui(), then here
+    UpdateTreeNodeNamebyDetailCardNameField();
+    // set Sampler from GUI
     Component[] comps = _detailPanel.getComponents();
     MultipleHttpRequestsConfig wholeConfig = new MultipleHttpRequestsConfig();
     List<HttpRequestConfig> configs = new ArrayList<HttpRequestConfig>();
@@ -156,11 +191,41 @@ public class ListContentSplitPanel extends JSplitPane implements ActionListener,
     sampler.setProperty( new TestElementProperty( CONFIG, wholeConfig ) );
   }
 
+  /**
+   * Check the current selected tree node name, if it is different from the name field in Detail card, then change it.
+   * This scenario happens when the user clicks out side of the split panel after editing DetailCard name field. This is
+   * different from the logic in valueChanged(TreeSelectEvent) which works for switching tree nodes and updates the last
+   * tree node name according to the last DetailCard Name field.
+   */
+  private void UpdateTreeNodeNamebyDetailCardNameField()
+  {
+    if ( _listPanel == null || _listPanel.getTreePanel() == null || _listPanel.getTreePanel().getCurrentNode() == null )
+    {
+      return;
+    }
+    DefaultMutableTreeNode currentNode = _listPanel.getTreePanel().getCurrentNode();
+    String oldName = currentNode.toString();
+    DetailCard lastPanel = _map.getRightPanelByTreeNodeName( oldName.toString() );
+
+    if ( lastPanel != null )
+    {
+      String newName = lastPanel.getNameField();
+
+      if ( !newName.equals( oldName ) )
+      {
+        newName = checkDupNodeName( newName );
+        lastPanel.setNameField( newName );
+        currentNode.setUserObject( newName );
+        _map.changeTreeNodeName( oldName, newName );
+      }
+    }
+  }
+
   //TestElement to GUI
   public void configure( TestElement element )
   {
     clear();
-    _requestSeq=1;
+    _requestSeq = 1;
     MultipleHttpRequestsConfig wholeConfig = (MultipleHttpRequestsConfig) element.getProperty( CONFIG )
         .getObjectValue();
     List<HttpRequestConfig> configs = wholeConfig.getHttpRequestConfigAsList();

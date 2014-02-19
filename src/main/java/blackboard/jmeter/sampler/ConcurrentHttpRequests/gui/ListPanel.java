@@ -24,7 +24,6 @@ public class ListPanel extends JPanel
     super( new BorderLayout() );
     //Create the components.
     _treePanel = new ListTree( parentPanel );
-    //_treePanel.setPreferredSize( new Dimension( 300, 150 ) );
 
     JButton addButton = new JButton( "Add" );
     addButton.setActionCommand( Constants.ADD_COMMAND );
@@ -63,6 +62,5 @@ public class ListPanel extends JPanel
   public void clear()
   {
     _treePanel.clear();
-
   }
 }

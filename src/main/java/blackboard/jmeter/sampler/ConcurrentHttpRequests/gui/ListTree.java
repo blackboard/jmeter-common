@@ -98,17 +98,25 @@ public class ListTree extends JPanel
 
   public String getCurrentNodeName()
   {
-    String currentNodeName = "";
-    TreePath currentSelection = _tree.getSelectionPath();
-    if ( currentSelection != null )
+    String currentNodeName = null;
+    DefaultMutableTreeNode currentNode = getCurrentNode();
+    if(currentNode!= null)
     {
-      DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) ( currentSelection.getLastPathComponent() );
-
       currentNodeName = currentNode.toString();
     }
     return currentNodeName;
   }
 
+  public DefaultMutableTreeNode getCurrentNode()
+  {
+    DefaultMutableTreeNode currentNode = null;
+    TreePath currentSelection = _tree.getSelectionPath();
+    if ( currentSelection != null )
+    {
+       currentNode = (DefaultMutableTreeNode) ( currentSelection.getLastPathComponent() );
+    }
+    return currentNode;
+  }
   /** Add child to the currently selected node. */
   public void addObject( Object child )
   {

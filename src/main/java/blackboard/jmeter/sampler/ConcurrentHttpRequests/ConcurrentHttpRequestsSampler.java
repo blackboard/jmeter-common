@@ -152,7 +152,11 @@ public class ConcurrentHttpRequestsSampler extends AbstractSampler implements In
       try
       {
         result = sampler.sample();
-        _result.addSubResult( result );
+        // synchronized for the addSubResult method, since SampleResult.storeSubResult is not synchronized and may recreate the subResults Array by accident.
+        synchronized ( _result )
+        {
+          _result.addSubResult( result );
+        }
       }
       catch ( Exception e )
       {
