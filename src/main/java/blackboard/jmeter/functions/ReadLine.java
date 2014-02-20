@@ -14,6 +14,8 @@ import java.util.Set;
 import org.apache.jmeter.engine.event.LoopIterationEvent;
 import org.apache.jmeter.engine.util.CompoundVariable;
 import org.apache.jmeter.functions.AbstractFunction;
+import org.apache.jmeter.functions.Property2;
+import org.apache.jmeter.functions.*;
 import org.apache.jmeter.functions.InvalidVariableException;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.samplers.Sampler;
@@ -54,17 +56,7 @@ public class ReadLine extends AbstractFunction implements TestStateListener
 		desc.add(JMeterUtils.getResString( "read_file_file_name" ));  //$NON-NLS-1$
 		desc.add(JMeterUtils.getResString( "function_name_parpot" )); //$NON-NLS-1$
 		desc.add(JMeterUtils.getResString("use_multiple_instance"));
-		desc.add(JMeterUtils.getResString( "desired_rate" )); //$NON-NLS-1$
-		desc.add(JMeterUtils.getResString( "current_rate" )); //$NON-NLS-1$
-		desc.add(JMeterUtils.getResString( "current_request"));
-		desc.add(JMeterUtils.getResString( "current_time" ));
 	}
-
-	private static final int MIN_PARAM_COUNT = 1;
-
-	private static final int MAX_PARAM_COUNT = 2;
-	
-	private static final int MAX_THREAD_COUNT = 10;
 
 	private Object[] values;
 
@@ -73,27 +65,48 @@ public class ReadLine extends AbstractFunction implements TestStateListener
 	private boolean firstTime = true; // Is the file to be opened first?
 
 	private boolean multipleUse = false; // Multiple thread use?
-
-	private int currentRate; // current rate of requests/minute
-
-	private int desiredRate; // Ultimate rate of requests/minute
 	
-	private int requestNumber; // Current request and line number
-	
-	private long currentTime; // Current location in time relative to the beginning of the test
-
 	private String fileName; // needed for error messages
+	
+	public static GlobalContext context = GlobalContext.INSTANCE; // Provides access to outside variables
+	
+	private long timePeriod; // Max time between calls
+	
+	private long startTime; // Start time for this particular period.
+	
+	private int desiredRate; // Desired rate for the current period
+	
+	private int requestNumber;
+	
+	private int periodNumber;
 	
 	private static PersistentFileReader globalFileReader = PersistentFileReader.INSTANCE;
 	
 	public static Map<String, BufferedReader> readers = globalFileReader.getFileReaders();
-
+	
 	public ReadLine()
 	{ 
 		if ( log.isDebugEnabled() ) 
 		{
 			log.debug("++++++++ Construct " + this );
 		}
+		
+		loadExternalVariables();
+		
+	}
+	
+	private synchronized void loadExternalVariables()
+	{
+		
+		timePeriod = (long) context.getObject("TIME_PERIOD"); // Max time between calls
+		
+		startTime = (long) context.getObject("SYNCHRONIZED_START_TIME"); // Start time for this particular period.
+		
+		desiredRate = (int) context.getObject("RATE"); // Desired rate for the current period
+		
+		requestNumber = (int) context.getObject("REQUEST_NUM");
+		
+		periodNumber = (int) context.getObject("PERIOD_NUM");
 	}
 
 	private synchronized void closeFile() 
@@ -211,8 +224,47 @@ public class ReadLine extends AbstractFunction implements TestStateListener
 
 	public long getWaitTime()
 	{
-		long waitTime = 0;
+		long waitTime;
 		
+		long currentTime = System.currentTimeMillis();
+		
+		int currentPeriod = (int) ((currentTime - startTime)/ timePeriod) + 1;
+		
+		if (periodNumber < currentPeriod)
+		{
+			if(requestNumber < desiredRate)
+			{
+				log.warn("Failed to send "  + (desiredRate - requestNumber) + " requests for period " + periodNumber);
+			}
+			else
+			{
+				log.info("Sent " + requestNumber + " requests for period " + periodNumber + " with rate " + rate);
+			}
+			
+			int delta = currentPeriod - periodNumber;
+			
+			if (delta <= 2)
+			{
+				log.warn("Skipping period " + (periodNumber + 1));
+			}
+			else if (delta > 2)
+			{
+				log.warn("Skipping periods " + (periodNumber + 1) + " to " + (currentPeriod - 1) );
+			}
+			
+			requestNumber = 0;
+			periodNumber = currentPeriod;
+			desriedRate = Integer.parseInt(PersistentFileReader.INSTANCE.readLine())
+			
+		}
+		
+		if (requestNumber < desiredRate)
+		{
+			
+		}
+		
+		
+		waitTime = 0;
 		return waitTime;
 	}
 	
@@ -229,7 +281,7 @@ public class ReadLine extends AbstractFunction implements TestStateListener
 			}
 
 		}
-
+		
 		checkParameterCount(parameters, 4);
 
 	}
