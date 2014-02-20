@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.LineNumberReader;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,7 +16,7 @@ import org.apache.jmeter.engine.event.LoopIterationEvent;
 import org.apache.jmeter.engine.util.CompoundVariable;
 import org.apache.jmeter.functions.AbstractFunction;
 import org.apache.jmeter.functions.Property2;
-import org.apache.jmeter.functions.*;
+import org.apache.jmeter.engine.util.CompoundVariable;
 import org.apache.jmeter.functions.InvalidVariableException;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.samplers.Sampler;
@@ -222,7 +223,7 @@ public class ReadLine extends AbstractFunction implements TestStateListener
 		return myValue;
 	}
 
-	public long getWaitTime()
+	public long getWaitTime() throws NumberFormatException, IOException
 	{
 		long waitTime;
 		
@@ -238,7 +239,7 @@ public class ReadLine extends AbstractFunction implements TestStateListener
 			}
 			else
 			{
-				log.info("Sent " + requestNumber + " requests for period " + periodNumber + " with rate " + rate);
+				log.info("Sent " + requestNumber + " requests for period " + periodNumber + " with rate " + desiredRate);
 			}
 			
 			int delta = currentPeriod - periodNumber;
@@ -252,9 +253,8 @@ public class ReadLine extends AbstractFunction implements TestStateListener
 				log.warn("Skipping periods " + (periodNumber + 1) + " to " + (currentPeriod - 1) );
 			}
 			
-			requestNumber = 0;
-			periodNumber = currentPeriod;
-			desriedRate = Integer.parseInt(PersistentFileReader.INSTANCE.readLine())
+			String nextRate = readNextRate();
+			desiredRate = Integer.parseInt(PersistentFileReader.INSTANCE.readLine(nextRate));
 			
 		}
 		
@@ -266,6 +266,25 @@ public class ReadLine extends AbstractFunction implements TestStateListener
 		
 		waitTime = 0;
 		return waitTime;
+	}
+	
+	public synchronized String readNextRate()
+	{
+		String nextRate;
+		CompoundVariable dataFileLocation = new CompoundVariable("mlcs.data.fileName");
+		Property2 prop2 = new Property2();
+		Collection<CompoundVariable> vars = new ArrayList<CompoundVariable>();
+		vars.add(dataFileLocation);
+		try {
+			prop2.setParameters(vars);
+			return prop2.execute();
+
+		} catch (InvalidVariableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return "0";
 	}
 	
 	public synchronized void setParameters( Collection<CompoundVariable> parameters ) throws InvalidVariableException 
