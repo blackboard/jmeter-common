@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
-
+apply plugin: 'jacoco'
 group 'blackboard.perf'
 
 version = '0.1-SNAPSHOT'
@@ -32,6 +32,17 @@ sourceSets {
                   compileClasspath += main.output
                   runtimeClasspath += main.output
                 }
+}
+jacoco {
+  toolVersion = "0.6.2.201302030002"
+}
+
+jacocoTestReport {
+  reports {
+      xml.enabled false
+      csv.enabled false
+      html.destination "${buildDir}/jacocoHtml"
+  }
 }
 
 task integTest(type: Test) {
