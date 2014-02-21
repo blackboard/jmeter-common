@@ -4,28 +4,20 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.LineNumberReader;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.jmeter.engine.event.LoopIterationEvent;
 import org.apache.jmeter.engine.util.CompoundVariable;
 import org.apache.jmeter.functions.AbstractFunction;
-import org.apache.jmeter.functions.Property2;
-import org.apache.jmeter.engine.util.CompoundVariable;
 import org.apache.jmeter.functions.InvalidVariableException;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.samplers.Sampler;
-import org.apache.jmeter.testelement.TestListener;
 import org.apache.jmeter.testelement.TestStateListener;
-import org.apache.jmeter.threads.JMeterVariables;
 import org.apache.jmeter.util.JMeterUtils;
 import org.apache.jorphan.logging.LoggingManager;
-import org.apache.jorphan.util.JMeterStopThreadException;
 import org.apache.log.Logger;
 
 import com.blackboard.learn.mobile.mlcs.tests.performance.replay.GlobalContext;
@@ -56,7 +48,7 @@ public class ReadLine extends AbstractFunction implements TestStateListener
 	{
 		desc.add(JMeterUtils.getResString( "read_file_file_name" ));  //$NON-NLS-1$
 		desc.add(JMeterUtils.getResString( "function_name_parpot" )); //$NON-NLS-1$
-		desc.add(JMeterUtils.getResString("use_multiple_instance"));
+		desc.add(JMeterUtils.getResString( "use_multiple_instance"));
 	}
 
 	private Object[] values;
@@ -77,9 +69,11 @@ public class ReadLine extends AbstractFunction implements TestStateListener
 	
 	private int desiredRate; // Desired rate for the current period
 	
-	private int requestNumber;
+	private int requestNumber; // Current Request number we are at
 	
-	private int periodNumber;
+	private int periodNumber; // Current Period we are at
+	
+	private String dataFileName; // Where are we getting the data from.
 	
 	private static PersistentFileReader globalFileReader = PersistentFileReader.INSTANCE;
 	
@@ -108,6 +102,9 @@ public class ReadLine extends AbstractFunction implements TestStateListener
 		requestNumber = (int) context.getObject("REQUEST_NUM");
 		
 		periodNumber = (int) context.getObject("PERIOD_NUM");
+		
+		dataFileName = (String) context.getObject("DATA_FILE_NAME");
+		
 	}
 
 	private synchronized void closeFile() 
@@ -197,7 +194,8 @@ public class ReadLine extends AbstractFunction implements TestStateListener
 				openFile( multipleUse );
 				if ( waitTime > 0.0 )
 				{
-					Thread.currentThread().sleep( waitTime );
+					Thread.currentThread();
+					Thread.sleep( waitTime );
 				}
 				else
 				{
@@ -223,7 +221,7 @@ public class ReadLine extends AbstractFunction implements TestStateListener
 		return myValue;
 	}
 
-	public long getWaitTime() throws NumberFormatException, IOException
+	public long getWaitTime() throws NumberFormatException
 	{
 		long waitTime;
 		
@@ -254,7 +252,14 @@ public class ReadLine extends AbstractFunction implements TestStateListener
 			}
 			
 			String nextRate = readNextRate();
-			desiredRate = Integer.parseInt(PersistentFileReader.INSTANCE.readLine(nextRate));
+			
+			try{
+				desiredRate = Integer.parseInt(PersistentFileReader.INSTANCE.readLine(nextRate));
+			}
+			catch(IOException e)
+			{
+				
+			}
 			
 		}
 		
@@ -263,34 +268,58 @@ public class ReadLine extends AbstractFunction implements TestStateListener
 			
 		}
 		
-		
 		waitTime = 0;
 		return waitTime;
 	}
 	
 	public synchronized String readNextRate()
 	{
-		String nextRate;
-		CompoundVariable dataFileLocation = new CompoundVariable("mlcs.data.fileName");
-		Property2 prop2 = new Property2();
-		Collection<CompoundVariable> vars = new ArrayList<CompoundVariable>();
-		vars.add(dataFileLocation);
-		try {
-			prop2.setParameters(vars);
-			return prop2.execute();
-
-		} catch (InvalidVariableException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		
+		String nextRate = "0"; // By default, send no requests 
+		LineNumberReader dataFileReader = null;
+		
+		try{
+			dataFileReader = new LineNumberReader( new FileReader(dataFileName));
+			while( dataFileReader.getLineNumber() < requestNumber )
+			{
+				dataFileReader.readLine();
+			}
+			nextRate = dataFileReader.readLine();
+			if ( nextRate == null )
+			{
+				return "0"; // Reached the end of the file
+			}
 		}
 		
-		return "0";
+		catch (IOException e)
+		{
+			System.err.println("Data file either cannot be opened or the data file is corrupt");
+		}
+		
+		finally
+		{
+			if (dataFileReader != null )
+			{
+				try {
+					dataFileReader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return nextRate;
 	}
 	
 	public synchronized void setParameters( Collection<CompoundVariable> parameters ) throws InvalidVariableException 
 	{
+		
 		log.debug("setParameter - Collection.size=" + parameters.size());
+		checkParameterCount(parameters, 1, 2);
 		values = parameters.toArray();
+		
+		fileName = (String) values[0];
+		multipleUse = ((String) values[1]).equals("true") ? true : false;
 
 		if ( log.isDebugEnabled() )
 		{
@@ -301,8 +330,6 @@ public class ReadLine extends AbstractFunction implements TestStateListener
 
 		}
 		
-		checkParameterCount(parameters, 4);
-
 	}
 
 	/** {@inheritDoc} */
