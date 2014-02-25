@@ -1,5 +1,8 @@
 package blackboard.jmeter.sampler.ConcurrentHttpRequests;
 
+import java.util.Locale;
+
+import org.apache.jmeter.util.JMeterUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,6 +16,7 @@ public class ListPanelTest
   @Before
   public void setUp()
   {
+    JMeterUtils.setLocale(new Locale("ignoreResources"));
     _panel = new ListPanel( new ListContentSplitPanel() );
     _panel.getTreePanel().addObject( "Tree Node" );
   }

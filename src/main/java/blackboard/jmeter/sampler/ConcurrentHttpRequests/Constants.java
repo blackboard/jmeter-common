@@ -1,4 +1,4 @@
-package blackboard.jmeter;
+package blackboard.jmeter.sampler.ConcurrentHttpRequests;
 
 /**
  * 

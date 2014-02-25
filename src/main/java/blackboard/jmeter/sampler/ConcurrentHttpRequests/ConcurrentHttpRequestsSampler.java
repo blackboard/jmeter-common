@@ -27,7 +27,6 @@ import org.apache.jmeter.threads.JMeterContextService;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
 
-import blackboard.jmeter.Constants;
 import blackboard.jmeter.sampler.ConcurrentHttpRequests.config.HttpRequestConfig;
 import blackboard.jmeter.sampler.ConcurrentHttpRequests.config.MultipleHttpRequestsConfig;
 import blackboard.jmeter.sampler.ConcurrentHttpRequests.gui.ListContentSplitPanel;

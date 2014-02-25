@@ -6,7 +6,9 @@ import java.awt.GridLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import blackboard.jmeter.Constants;
+import org.apache.jmeter.util.JMeterUtils;
+
+import blackboard.jmeter.sampler.ConcurrentHttpRequests.Constants;
 
 /**
  * ListPanel Contains a ButtonPanel and ListTree
@@ -25,11 +27,11 @@ public class ListPanel extends JPanel
     //Create the components.
     _treePanel = new ListTree( parentPanel );
 
-    JButton addButton = new JButton( "Add" );
+    JButton addButton = new JButton( JMeterUtils.getResString( "add" ) );
     addButton.setActionCommand( Constants.ADD_COMMAND );
     addButton.addActionListener( parentPanel );
 
-    JButton removeButton = new JButton( "Remove" );
+    JButton removeButton = new JButton( JMeterUtils.getResString( "remove" ) );
     removeButton.setActionCommand( Constants.REMOVE_COMMAND );
     removeButton.addActionListener( parentPanel );
 

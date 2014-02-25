@@ -2,13 +2,14 @@ package blackboard.jmeter.sampler.ConcurrentHttpRequests;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.jmeter.protocol.http.sampler.HTTPSampler;
 import org.apache.jmeter.testelement.property.TestElementProperty;
+import org.apache.jmeter.util.JMeterUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import blackboard.jmeter.Constants;
 import blackboard.jmeter.sampler.ConcurrentHttpRequests.config.HttpRequestConfig;
 import blackboard.jmeter.sampler.ConcurrentHttpRequests.config.MultipleHttpRequestsConfig;
 import blackboard.jmeter.sampler.ConcurrentHttpRequests.gui.ListContentSplitPanel;
@@ -22,6 +23,7 @@ public class ConcurrentHttpRequestsSamplerIntegTest
   @Before
   public void setUp()
   {
+    JMeterUtils.setLocale(new Locale("ignoreResources"));
     _sampler = new ConcurrentHttpRequestsSampler();
 
     MultipleHttpRequestsConfig wholeConfig = new MultipleHttpRequestsConfig();

@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.apache.jmeter.protocol.http.config.gui.UrlConfigGui;
+import org.apache.jmeter.util.JMeterUtils;
 
 public class DetailCard extends JPanel
 {
@@ -32,7 +33,8 @@ public class DetailCard extends JPanel
     editConstraints.anchor = GridBagConstraints.FIRST_LINE_START;
     editConstraints.weightx = 1.0;
     editConstraints.fill = GridBagConstraints.HORIZONTAL;
-    addToPanel( namePanel, labelConstraints, 0, 0, new JLabel( "  Http Request Name: ", JLabel.RIGHT ) );
+    addToPanel( namePanel, labelConstraints, 0, 0, new JLabel( JMeterUtils.getResString( "web_testing_title" ) + " "
+                                                               + JMeterUtils.getResString( "name" ), JLabel.RIGHT ) );
     addToPanel( namePanel, editConstraints, 1, 0, _nameField = new JTextField( 15 ) );
     _nameField.setText( name );
 
@@ -53,14 +55,14 @@ public class DetailCard extends JPanel
   {
     return _nameField.getText();
   }
-  
+
   public String getName()
   {
     return _nameField.getText();
-    
-      }
-  
-  public void setNameField(String name)
+
+  }
+
+  public void setNameField( String name )
   {
     _nameField.setText( name );
   }

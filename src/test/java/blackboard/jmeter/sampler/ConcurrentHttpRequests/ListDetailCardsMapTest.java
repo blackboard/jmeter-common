@@ -2,6 +2,9 @@ package blackboard.jmeter.sampler.ConcurrentHttpRequests;
 
 import static org.mockito.Mockito.mock;
 
+import java.util.Locale;
+
+import org.apache.jmeter.util.JMeterUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,6 +20,7 @@ public class ListDetailCardsMapTest
   @Before
   public void setUp()
   {
+    JMeterUtils.setLocale(new Locale("ignoreResources"));
     _map = new ListDetailCardsMap();
     _map.add( NODE_NAME_PREFIX + "1", CARD_NAME_PREFIX + "1", mock( DetailCard.class ) );
     _map.add( NODE_NAME_PREFIX + "2", CARD_NAME_PREFIX + "2", mock( DetailCard.class ) );

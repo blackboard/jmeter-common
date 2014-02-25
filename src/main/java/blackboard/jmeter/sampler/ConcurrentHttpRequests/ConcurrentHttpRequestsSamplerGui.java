@@ -13,7 +13,6 @@ import org.apache.jmeter.gui.util.HorizontalPanel;
 import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
 import org.apache.jmeter.testelement.TestElement;
 
-import blackboard.jmeter.Constants;
 import blackboard.jmeter.sampler.ConcurrentHttpRequests.gui.ListContentSplitPanel;
 
 public class ConcurrentHttpRequestsSamplerGui extends AbstractSamplerGui implements UnsharedComponent

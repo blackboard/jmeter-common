@@ -17,8 +17,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.apache.jmeter.protocol.http.config.gui.UrlConfigGui;
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jmeter.testelement.property.TestElementProperty;
+import org.apache.jmeter.util.JMeterUtils;
 
-import blackboard.jmeter.Constants;
+import blackboard.jmeter.sampler.ConcurrentHttpRequests.Constants;
 import blackboard.jmeter.sampler.ConcurrentHttpRequests.config.HttpRequestConfig;
 import blackboard.jmeter.sampler.ConcurrentHttpRequests.config.MultipleHttpRequestsConfig;
 
@@ -38,7 +39,7 @@ public class ListContentSplitPanel extends JSplitPane implements ActionListener,
   private int _requestSeq = 1;
   public static final String CONFIG = "List-Content";
   private static final String URL_CONFIG = "UrlConfigGui";
-  private static final String HTTP_REQUEST_PREFIX = "HTTP REQUEST ";
+  private static final String HTTP_REQUEST_PREFIX = JMeterUtils.getResString( "web_testing_title" );
 
   public ListDetailCardsMap getMap()
   {
@@ -64,7 +65,7 @@ public class ListContentSplitPanel extends JSplitPane implements ActionListener,
   public void addNewRequest()
   {
     // Add tree node in left Panel
-    String treeNodeName = HTTP_REQUEST_PREFIX + _requestSeq;
+    String treeNodeName = HTTP_REQUEST_PREFIX + " " + _requestSeq;
     treeNodeName = checkDupNodeName( treeNodeName );
 
     _listPanel.getTreePanel().addObject( treeNodeName );
