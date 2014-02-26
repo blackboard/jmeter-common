@@ -16,54 +16,54 @@ import java.util.Set;
 public class ListDetailCardsMap
 {
 
-  private Map<String, String> _treeNodeNameToCardName = new HashMap<String, String>();
-  private Map<String, DetailCard> _cardNameToRightPanel = new HashMap<String, DetailCard>();
+  private Map<String, String> treeNodeNameToCardName = new HashMap<String, String>();
+  private Map<String, DetailCard> cardNameToRightPanel = new HashMap<String, DetailCard>();
   
   public void changeTreeNodeName(String oldName, String newName)
   {
-    String cardName = _treeNodeNameToCardName.get( oldName );
-    _treeNodeNameToCardName.remove( oldName );
-    _treeNodeNameToCardName.put( newName, cardName );
+    String cardName = treeNodeNameToCardName.get( oldName );
+    treeNodeNameToCardName.remove( oldName );
+    treeNodeNameToCardName.put( newName, cardName );
   }
   
   public void removeTreeNode(String name)
   {
-    String cardName = _treeNodeNameToCardName.get( name );
-    _treeNodeNameToCardName.remove( name );
-    _cardNameToRightPanel.remove( cardName );
+    String cardName = treeNodeNameToCardName.get( name );
+    treeNodeNameToCardName.remove( name );
+    cardNameToRightPanel.remove( cardName );
   }
   
   public DetailCard getRightPanelByTreeNodeName(String name)
   {
-    String cardName = _treeNodeNameToCardName.get( name );
-    return _cardNameToRightPanel.get( cardName );
+    String cardName = treeNodeNameToCardName.get( name );
+    return cardNameToRightPanel.get( cardName );
   }
   
   public String getCardNameByTreeNodeName(String name)
   {
-    return _treeNodeNameToCardName.get( name );
+    return treeNodeNameToCardName.get( name );
   }
   
   public void add(String treeNodeName, String cardName, DetailCard panel)
   {
-    _treeNodeNameToCardName.put( treeNodeName, cardName );
-    _cardNameToRightPanel.put( cardName, panel );
+    treeNodeNameToCardName.put( treeNodeName, cardName );
+    cardNameToRightPanel.put( cardName, panel );
   }
   
   public void clear()
   {
-    _treeNodeNameToCardName.clear();
-    _cardNameToRightPanel.clear();
+    treeNodeNameToCardName.clear();
+    cardNameToRightPanel.clear();
   }
   
   public Set<String> getNodeNames()
   {
-    Set<String> keys = _treeNodeNameToCardName.keySet();
+    Set<String> keys = treeNodeNameToCardName.keySet();
     return keys;
   }
 
   public boolean containsNode( String nodeName )
   {
-    return _treeNodeNameToCardName.containsKey( nodeName );
+    return treeNodeNameToCardName.containsKey( nodeName );
   }
 }

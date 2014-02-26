@@ -19,13 +19,13 @@ public class ListPanel extends JPanel
 {
 
   private static final long serialVersionUID = 1188388767484217398L;
-  ListTree _treePanel;
+  ListTree treePanel;
 
   public ListPanel( ListContentSplitPanel parentPanel )
   {
     super( new BorderLayout() );
     //Create the components.
-    _treePanel = new ListTree( parentPanel );
+    treePanel = new ListTree( parentPanel );
 
     JButton addButton = new JButton( JMeterUtils.getResString( "add" ) );
     addButton.setActionCommand( Constants.ADD_COMMAND );
@@ -39,18 +39,18 @@ public class ListPanel extends JPanel
     buttonPanel.add( addButton );
     buttonPanel.add( removeButton );
 
-    add( _treePanel, BorderLayout.CENTER );
+    add( treePanel, BorderLayout.CENTER );
     add( buttonPanel, BorderLayout.NORTH );
   }
 
   public ListTree getTreePanel()
   {
-    return _treePanel;
+    return treePanel;
   }
 
   public String getLastSelectedTreeNodeName()
   {
-    Object obj = _treePanel.getTree().getLastSelectedPathComponent();
+    Object obj = treePanel.getTree().getLastSelectedPathComponent();
     if ( obj != null )
     {
       return obj.toString();
@@ -63,6 +63,6 @@ public class ListPanel extends JPanel
 
   public void clear()
   {
-    _treePanel.clear();
+    treePanel.clear();
   }
 }

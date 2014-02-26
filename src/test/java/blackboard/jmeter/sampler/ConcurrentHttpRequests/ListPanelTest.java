@@ -11,27 +11,27 @@ import blackboard.jmeter.sampler.ConcurrentHttpRequests.gui.ListPanel;
 
 public class ListPanelTest
 {
-  ListPanel _panel;
+  ListPanel panel;
 
   @Before
   public void setUp()
   {
     JMeterUtils.setLocale(new Locale("ignoreResources"));
-    _panel = new ListPanel( new ListContentSplitPanel() );
-    _panel.getTreePanel().addObject( "Tree Node" );
+    panel = new ListPanel( new ListContentSplitPanel() );
+    panel.getTreePanel().addObject( "Tree Node" );
   }
 
   @Test
   public void testGetLastSelectedTreeNodeName()
   {
-    String treeNode = _panel.getLastSelectedTreeNodeName();
+    String treeNode = panel.getLastSelectedTreeNodeName();
     org.junit.Assert.assertEquals( treeNode, "Tree Node" );
   }
 
   @Test
   public void testClear()
   {
-    _panel.clear();
-    org.junit.Assert.assertEquals( 0, _panel.getTreePanel().getNodeCount() );
+    panel.clear();
+    org.junit.Assert.assertEquals( 0, panel.getTreePanel().getNodeCount() );
   }
 }

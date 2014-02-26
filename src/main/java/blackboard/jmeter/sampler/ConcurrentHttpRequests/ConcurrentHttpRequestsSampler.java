@@ -47,29 +47,29 @@ public class ConcurrentHttpRequestsSampler extends HTTPSamplerBase implements In
   private static final String NON_HTTP_RESPONSE_MESSAGE = "Non HTTP response message";
 
   private static final String RESPONSE_MESSAGE_FORMAT = "Number of samples in transaction : %s, number of failing samples : %s";
-  private SampleResult _result = new SampleResult();
+  private SampleResult result = new SampleResult();
 
   private static final Logger log = LoggingManager.getLoggerForClass();
-  ExecutorService _executor;
-  private JMeterContext _jmeterContextOfParentThread;
+  private ExecutorService executor;
+  private JMeterContext jmeterContextOfParentThread;
 
   @Override
   public SampleResult sample( Entry arg0 )
   {
     // We must get Context here which will be used for the sub requests's variables replacement.
-    // Early setting context to _jmeterContextOfParentThread may miss the variable changes in the preprocessor
-    _jmeterContextOfParentThread = JMeterContextService.getContext();
+    // Early setting context to jmeterContextOfParentThread may miss the variable changes in the preprocessor
+    jmeterContextOfParentThread = JMeterContextService.getContext();
     MultipleHttpRequestsConfig wholeConfig = (MultipleHttpRequestsConfig) getProperty( ListContentSplitPanel.CONFIG )
         .getObjectValue();
     List<HttpRequestConfig> configs = wholeConfig.getHttpRequestConfigAsList();
 
-    _result.setSampleLabel( getName() );
-    _result.sampleStart(); // start stopwatch
+    result.setSampleLabel( getName() );
+    result.sampleStart(); // start stopwatch
 
     try
     {
       // HttpRequest Config number is the thread pool size
-      ExecutorService _executor = Executors.newFixedThreadPool( configs.size() );
+      executor = Executors.newFixedThreadPool( configs.size() );
       for ( HttpRequestConfig config : configs )
       {
         // Use the UrlConfig Element to setup HttpSamplerBase
@@ -85,34 +85,34 @@ public class ConcurrentHttpRequestsSampler extends HTTPSamplerBase implements In
         sampler.setName( name );
         sampler.setEnabled( true );
         Runnable worker = new HttpRequest( sampler );
-        _executor.execute( worker );
+        executor.execute( worker );
       }
       // This will make the executor accept no new threads
       // and finish all existing threads in the queue
-      _executor.shutdown();
+      executor.shutdown();
       // Wait until all threads are finish. 
       // TODO This timeout can be retrieved from the longest timeout of children Http requests.
-      _executor.awaitTermination( 1000000, TimeUnit.MILLISECONDS );
-      // _result.sampleEnd() is unnecessary here because every call of _result.addSubResult( result ) would extend the End Time.
-      // Also calling _result.sampleEnd() after _result.addSubResult( result ) would report error "sampleEnd called twice java.lang.Throwable: Invalid call sequence"
+      executor.awaitTermination( 1000000, TimeUnit.MILLISECONDS );
+      // result.sampleEnd() is unnecessary here because every call of result.addSubResult( result ) would extend the End Time.
+      // Also calling result.sampleEnd() after result.addSubResult( result ) would report error "sampleEnd called twice java.lang.Throwable: Invalid call sequence"
       processResult();
     }
     catch ( Exception e )
     {
-      _result.sampleEnd(); // stop stopwatch
-      _result.setSuccessful( false );
+      result.sampleEnd(); // stop stopwatch
+      result.setSuccessful( false );
       ByteArrayOutputStream text = new ByteArrayOutputStream( 200 );
       e.printStackTrace( new PrintStream( text ) );
-      _result.setResponseData( text.toByteArray() );
+      result.setResponseData( text.toByteArray() );
 
-      _result.setResponseMessage( NON_HTTP_RESPONSE_MESSAGE + ": " + e.getMessage() );
-      _result.setDataType( SampleResult.TEXT );
+      result.setResponseMessage( NON_HTTP_RESPONSE_MESSAGE + ": " + e.getMessage() );
+      result.setDataType( SampleResult.TEXT );
 
-      _result.setResponseCode( NON_HTTP_RESPONSE_CODE + ": " + e.getClass().getName() );
+      result.setResponseCode( NON_HTTP_RESPONSE_CODE + ": " + e.getClass().getName() );
       log.error( e.getMessage() );
     }
 
-    return _result;
+    return result;
 
   }
 
@@ -183,8 +183,8 @@ public class ConcurrentHttpRequestsSampler extends HTTPSamplerBase implements In
   private void processResult()
   {
     int failureNum = 0;
-    _result.setSuccessful( true );
-    SampleResult[] subResults = _result.getSubResults();
+    result.setSuccessful( true );
+    SampleResult[] subResults = result.getSubResults();
     StringBuilder failureResponseCode = new StringBuilder();
     for ( SampleResult subResult : subResults )
     {
@@ -199,22 +199,22 @@ public class ConcurrentHttpRequestsSampler extends HTTPSamplerBase implements In
     if ( ( resultOption == Constants.ResultOption.ALLPASS.getOptionValue() && failureNum > 0 )
          || failureNum == subResults.length )
     {
-      _result.setSuccessful( false );
-      _result.setResponseCode( failureResponseCode.toString() );
+      result.setSuccessful( false );
+      result.setResponseCode( failureResponseCode.toString() );
 
     }
     else
     {
-      _result.setSuccessful( true );
-      _result.setResponseCodeOK(); // 200 code
+      result.setSuccessful( true );
+      result.setResponseCodeOK(); // 200 code
     }
-    _result.setResponseMessage( String.format( RESPONSE_MESSAGE_FORMAT, subResults.length, failureNum ) );
+    result.setResponseMessage( String.format( RESPONSE_MESSAGE_FORMAT, subResults.length, failureNum ) );
 
   }
 
   protected SampleResult getResult()
   {
-    return _result;
+    return result;
   }
 
   class HttpRequest implements Runnable
@@ -229,19 +229,19 @@ public class ConcurrentHttpRequestsSampler extends HTTPSamplerBase implements In
     @Override
     public void run()
     {
-      SampleResult result = null;
+      SampleResult subResult = null;
       try
       {
         // get context from parent thread, then set to current sub thread
-        JMeterContextService.replaceContext( _jmeterContextOfParentThread );
+        JMeterContextService.replaceContext( jmeterContextOfParentThread );
         JMeterContext context = JMeterContextService.getContext();
         // the samplingStarted field may affect the property value: value vs cachedValue
         context.setSamplingStarted( true );
-        result = sampler.sample();
+        subResult = sampler.sample();
         // synchronized for the addSubResult method, since SampleResult.storeSubResult is not synchronized and may recreate the subResults Array by accident.
-        synchronized ( _result )
+        synchronized ( result )
         {
-          _result.addSubResult( result );
+          result.addSubResult( subResult );
         }
       }
       catch ( Exception e )
@@ -254,7 +254,7 @@ public class ConcurrentHttpRequestsSampler extends HTTPSamplerBase implements In
   @Override
   public boolean interrupt()
   {
-    List<Runnable> remains = _executor.shutdownNow();
+    List<Runnable> remains = executor.shutdownNow();
     return null == remains || remains.size() == 0;
   }
 

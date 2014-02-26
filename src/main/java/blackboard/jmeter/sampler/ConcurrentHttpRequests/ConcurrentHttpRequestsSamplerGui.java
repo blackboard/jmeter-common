@@ -21,12 +21,13 @@ public class ConcurrentHttpRequestsSamplerGui extends AbstractSamplerGui impleme
   private static final long serialVersionUID = -8825258141220885722L;
   private static final String SAMPLER_LABEL = "jp@bb - Concurrent Http Requests Sampler";
   private static final String SAMPLER_COMMENT = "Blackboard Concurrent Request Sampler.";
-  private ListContentSplitPanel _splitPanel;
+  private ListContentSplitPanel splitPanel;
   private static final String ALL_PASS = "Passes if all sub-requests pass";
   private static final String ONE_PASS = "Passes if one sub-request passes";
+  private static final String RESULT_OPTION = "Result Option: ";
   
-  private JRadioButton _allPassButton;
-  private JRadioButton _onePassButton;
+  private JRadioButton allPassButton;
+  private JRadioButton onePassButton;
 
   public ConcurrentHttpRequestsSamplerGui()
   {
@@ -40,9 +41,9 @@ public class ConcurrentHttpRequestsSamplerGui extends AbstractSamplerGui impleme
     add( makeTitlePanel(), BorderLayout.NORTH );
 
     JPanel contentPanel = new JPanel( new BorderLayout( 0, 5 ) );
-    _splitPanel = new ListContentSplitPanel();
+    splitPanel = new ListContentSplitPanel();
     contentPanel.add( makeErrorOptionPanel(), BorderLayout.NORTH );
-    contentPanel.add( _splitPanel, BorderLayout.CENTER );
+    contentPanel.add( splitPanel, BorderLayout.CENTER );
 
     add( contentPanel, BorderLayout.CENTER );
   }
@@ -50,18 +51,18 @@ public class ConcurrentHttpRequestsSamplerGui extends AbstractSamplerGui impleme
   private Container makeErrorOptionPanel()
   {
     HorizontalPanel panel = new HorizontalPanel();
-    panel.add( new JLabel( "Result Option: ", JLabel.RIGHT ) );
+    panel.add( new JLabel( RESULT_OPTION, JLabel.RIGHT ) );
 
-    _allPassButton = new JRadioButton( ALL_PASS );
-    _allPassButton.setSelected( true );
-    _onePassButton = new JRadioButton( ONE_PASS );
+    allPassButton = new JRadioButton( ALL_PASS );
+    allPassButton.setSelected( true );
+    onePassButton = new JRadioButton( ONE_PASS );
 
     ButtonGroup group = new ButtonGroup();
-    group.add( _allPassButton );
-    group.add( _onePassButton );
+    group.add( allPassButton );
+    group.add( onePassButton );
 
-    panel.add( _allPassButton );
-    panel.add( _onePassButton );
+    panel.add( allPassButton );
+    panel.add( onePassButton );
     return panel;
   }
 
@@ -84,14 +85,14 @@ public class ConcurrentHttpRequestsSamplerGui extends AbstractSamplerGui impleme
     int resultOption = element.getPropertyAsInt( Constants.RESULT_OPTION );
     if ( resultOption == Constants.ResultOption.ALLPASS.getOptionValue() )
     {
-      _allPassButton.setSelected( true );
+      allPassButton.setSelected( true );
     }
     else
     {
-      _onePassButton.setSelected( true );
+      onePassButton.setSelected( true );
     }
     ConcurrentHttpRequestsSampler sampler = (ConcurrentHttpRequestsSampler) element;
-    _splitPanel.configure( sampler );
+    splitPanel.configure( sampler );
   }
 
   // From GUI to Sampler
@@ -99,10 +100,10 @@ public class ConcurrentHttpRequestsSamplerGui extends AbstractSamplerGui impleme
   public void modifyTestElement( TestElement sampler )
   {
     sampler.clear();
-    sampler.setProperty( Constants.RESULT_OPTION, _allPassButton.isSelected()
+    sampler.setProperty( Constants.RESULT_OPTION, allPassButton.isSelected()
         ? Constants.ResultOption.ALLPASS.getOptionValue()
         : Constants.ResultOption.ONEPASS.getOptionValue() );
-    _splitPanel.modifyTestElement( sampler );
+    splitPanel.modifyTestElement( sampler );
     this.configureTestElement( sampler );
   }
 
@@ -110,7 +111,7 @@ public class ConcurrentHttpRequestsSamplerGui extends AbstractSamplerGui impleme
   public void clearGui()
   {
     super.clearGui();
-    _splitPanel.clear();
+    splitPanel.clear();
   }
 
   @Override

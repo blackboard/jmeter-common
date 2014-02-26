@@ -43,27 +43,27 @@ import javax.swing.tree.TreeSelectionModel;
 public class ListTree extends JPanel
 {
   private static final long serialVersionUID = 2705391645080201296L;
-  protected DefaultMutableTreeNode _rootNode;
-  protected DefaultTreeModel _treeModel;
-  protected JTree _tree;
-  private Toolkit _toolkit = Toolkit.getDefaultToolkit();
-  String _selectedNodeName;
-  ListDetailCardsMap _map;
+  protected DefaultMutableTreeNode rootNode;
+  protected DefaultTreeModel treeModel;
+  protected JTree tree;
+  private Toolkit toolkit = Toolkit.getDefaultToolkit();
+  String selectedNodeName;
+  ListDetailCardsMap map;
 
   public ListTree( ListContentSplitPanel splitPanel )
   {
     super( new GridLayout( 1, 0 ) );
 
-    _rootNode = new DefaultMutableTreeNode( "Root Node" );
-    _treeModel = new DefaultTreeModel( _rootNode );
-    _tree = new JTree( _treeModel );
-    _tree.setEditable( false );
-    _tree.getSelectionModel().setSelectionMode( TreeSelectionModel.SINGLE_TREE_SELECTION );
-    _tree.setShowsRootHandles( true );
-    _tree.addTreeSelectionListener( splitPanel );
-    _tree.setRootVisible( false );
+    rootNode = new DefaultMutableTreeNode( "Root Node" );
+    treeModel = new DefaultTreeModel( rootNode );
+    tree = new JTree( treeModel );
+    tree.setEditable( false );
+    tree.getSelectionModel().setSelectionMode( TreeSelectionModel.SINGLE_TREE_SELECTION );
+    tree.setShowsRootHandles( true );
+    tree.addTreeSelectionListener( splitPanel );
+    tree.setRootVisible( false );
 
-    JScrollPane scrollPane = new JScrollPane( _tree );
+    JScrollPane scrollPane = new JScrollPane( tree );
     add( scrollPane );
   }
 
@@ -71,7 +71,7 @@ public class ListTree extends JPanel
   public void removeCurrentNode()
   {
 
-    TreePath currentSelection = _tree.getSelectionPath();
+    TreePath currentSelection = tree.getSelectionPath();
     if ( currentSelection != null )
     {
       DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) ( currentSelection.getLastPathComponent() );
@@ -81,19 +81,19 @@ public class ListTree extends JPanel
       {
         int index = parent.getIndex( currentNode );
 
-        _tree.setSelectionRow( index > 0 ? ( index - 1 ) : 1 );
-        _treeModel.removeNodeFromParent( currentNode );
+        tree.setSelectionRow( index > 0 ? ( index - 1 ) : 1 );
+        treeModel.removeNodeFromParent( currentNode );
         return;
       }
     }
 
     // Either there was no selection, or the root was selected.
-    _toolkit.beep();
+    toolkit.beep();
   }
 
   public int getNodeCount()
   {
-    return _tree.getRowCount();
+    return tree.getRowCount();
   }
 
   public String getCurrentNodeName()
@@ -110,7 +110,7 @@ public class ListTree extends JPanel
   public DefaultMutableTreeNode getCurrentNode()
   {
     DefaultMutableTreeNode currentNode = null;
-    TreePath currentSelection = _tree.getSelectionPath();
+    TreePath currentSelection = tree.getSelectionPath();
     if ( currentSelection != null )
     {
        currentNode = (DefaultMutableTreeNode) ( currentSelection.getLastPathComponent() );
@@ -129,13 +129,13 @@ public class ListTree extends JPanel
     DefaultMutableTreeNode childNode = new DefaultMutableTreeNode( child );
 
     //It is key to invoke this on the TreeModel, and NOT DefaultMutableTreeNode
-    _treeModel.insertNodeInto( childNode, _rootNode, _rootNode.getChildCount() );
+    treeModel.insertNodeInto( childNode, rootNode, rootNode.getChildCount() );
     //Make sure the user can see the lovely new node.
     if ( shouldBeVisible )
     {
       TreePath treePath = new TreePath( childNode.getPath() );
-      _tree.scrollPathToVisible( treePath );
-      _tree.setSelectionPath( treePath );
+      tree.scrollPathToVisible( treePath );
+      tree.setSelectionPath( treePath );
     }
 
     return childNode;
@@ -144,23 +144,23 @@ public class ListTree extends JPanel
 
   public JTree getTree()
   {
-    return _tree;
+    return tree;
   }
 
   public void clear()
   {
-    DefaultMutableTreeNode root = (DefaultMutableTreeNode) _treeModel.getRoot();
+    DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeModel.getRoot();
     int count = root.getChildCount();
     for ( int i = 0; i < count; i++ )
     {
       // always remove the ChildAt(0) which is the 1st child node. 
       // You can get ChildAt(2) after 1 out of 3 children node gets removed
-      _treeModel.removeNodeFromParent( (DefaultMutableTreeNode) root.getChildAt( 0 ) );
+      treeModel.removeNodeFromParent( (DefaultMutableTreeNode) root.getChildAt( 0 ) );
     }
   }
 
   public void nodeChanged( DefaultMutableTreeNode lastNode )
   {
-    _treeModel.nodeChanged( lastNode );
+    treeModel.nodeChanged( lastNode );
   }
 }

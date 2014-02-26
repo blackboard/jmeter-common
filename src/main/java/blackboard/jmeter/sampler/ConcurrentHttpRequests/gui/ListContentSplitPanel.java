@@ -33,28 +33,28 @@ public class ListContentSplitPanel extends JSplitPane implements ActionListener,
 {
 
   private static final long serialVersionUID = 4096032332485007430L;
-  private ListPanel _listPanel;
-  private JPanel _detailPanel;
-  private ListDetailCardsMap _map;
-  private int _requestSeq = 1;
+  private ListPanel listPanel;
+  private JPanel detailPanel;
+  private ListDetailCardsMap map;
+  private int requestSeq = 1;
   public static final String CONFIG = "List-Content";
   private static final String URL_CONFIG = "UrlConfigGui";
   private static final String HTTP_REQUEST_PREFIX = JMeterUtils.getResString( "web_testing_title" );
 
   public ListDetailCardsMap getMap()
   {
-    return _map;
+    return map;
   }
 
   public ListContentSplitPanel()
   {
     super( JSplitPane.HORIZONTAL_SPLIT );
-    _map = new ListDetailCardsMap();
+    map = new ListDetailCardsMap();
 
-    _detailPanel = new JPanel( new CardLayout() );
-    _listPanel = new ListPanel( this );
-    setLeftComponent( _listPanel );
-    setRightComponent( _detailPanel );
+    detailPanel = new JPanel( new CardLayout() );
+    listPanel = new ListPanel( this );
+    setLeftComponent( listPanel );
+    setRightComponent( detailPanel );
 
     setOneTouchExpandable( true );
     setDividerLocation( 180 );
@@ -65,23 +65,23 @@ public class ListContentSplitPanel extends JSplitPane implements ActionListener,
   public void addNewRequest()
   {
     // Add tree node in left Panel
-    String treeNodeName = HTTP_REQUEST_PREFIX + " " + _requestSeq;
+    String treeNodeName = HTTP_REQUEST_PREFIX + " " + requestSeq;
     treeNodeName = checkDupNodeName( treeNodeName );
 
-    _listPanel.getTreePanel().addObject( treeNodeName );
+    listPanel.getTreePanel().addObject( treeNodeName );
 
     //Add Card in right Panel
     // treeNodeName may also work for cardname
     String cardName = treeNodeName;
     cardName = checkDupCardName( cardName );
     DetailCard panel = addNewDetailCard( treeNodeName );
-    _map.add( treeNodeName, treeNodeName, panel );
-    _requestSeq++;
+    map.add( treeNodeName, treeNodeName, panel );
+    requestSeq++;
   }
 
   private String checkDupCardName( String cardName )
   {
-    while ( _map.containsNode( cardName ) )
+    while ( map.containsNode( cardName ) )
     {
       cardName = cardName + UUID.randomUUID().toString().substring( 0, 6 );
     }
@@ -90,26 +90,26 @@ public class ListContentSplitPanel extends JSplitPane implements ActionListener,
 
   private void setVisiblePanel( String cardName )
   {
-    CardLayout layout = (CardLayout) _detailPanel.getLayout();
-    layout.show( _detailPanel, cardName );
+    CardLayout layout = (CardLayout) detailPanel.getLayout();
+    layout.show( detailPanel, cardName );
   }
 
   private DetailCard addNewDetailCard( String name )
   {
     DetailCard card = new DetailCard( name );
-    _detailPanel.add( card, name );
+    detailPanel.add( card, name );
     setVisiblePanel( name );
-    _detailPanel.validate();
+    detailPanel.validate();
     return card;
   }
 
   // Remove New Request
   private void removeRequest( String treeNodeName )
   {
-    _listPanel.getTreePanel().removeCurrentNode();
-    DetailCard panel = _map.getRightPanelByTreeNodeName( treeNodeName );
-    _detailPanel.remove( panel );
-    _map.removeTreeNode( treeNodeName );
+    listPanel.getTreePanel().removeCurrentNode();
+    DetailCard panel = map.getRightPanelByTreeNodeName( treeNodeName );
+    detailPanel.remove( panel );
+    map.removeTreeNode( treeNodeName );
   }
 
   public void actionPerformed( ActionEvent e )
@@ -121,7 +121,7 @@ public class ListContentSplitPanel extends JSplitPane implements ActionListener,
     }
     else if ( Constants.REMOVE_COMMAND.equals( command ) )
     {
-      String selectedNodeName = _listPanel.getTreePanel().getCurrentNodeName();
+      String selectedNodeName = listPanel.getTreePanel().getCurrentNodeName();
       if ( selectedNodeName != null )
       {
         removeRequest( selectedNodeName );
@@ -136,7 +136,7 @@ public class ListContentSplitPanel extends JSplitPane implements ActionListener,
     if ( e.getOldLeadSelectionPath() != null )
     {
       DefaultMutableTreeNode lastNode = (DefaultMutableTreeNode) e.getOldLeadSelectionPath().getLastPathComponent();
-      DetailCard lastPanel = _map.getRightPanelByTreeNodeName( lastNode.toString() );
+      DetailCard lastPanel = map.getRightPanelByTreeNodeName( lastNode.toString() );
       String oldName = lastNode.toString();
       if ( lastPanel != null )
       {
@@ -146,22 +146,22 @@ public class ListContentSplitPanel extends JSplitPane implements ActionListener,
           newName = checkDupNodeName( newName );
           lastPanel.setNameField( newName );
           lastNode.setUserObject( newName );
-          _map.changeTreeNodeName( oldName, newName );
+          map.changeTreeNodeName( oldName, newName );
         }
       }
-      _listPanel.getTreePanel().nodeChanged( lastNode );
+      listPanel.getTreePanel().nodeChanged( lastNode );
     }
     // Display the new selected treeNode and its DetailCard in the right
-    String selectedNodeName = _listPanel.getLastSelectedTreeNodeName();
+    String selectedNodeName = listPanel.getLastSelectedTreeNodeName();
     if ( selectedNodeName != null )
     {
-      setVisiblePanel( _map.getCardNameByTreeNodeName( selectedNodeName ) );
+      setVisiblePanel( map.getCardNameByTreeNodeName( selectedNodeName ) );
     }
   }
 
   private String checkDupNodeName( String nodeName )
   {
-    while ( _map.containsNode( nodeName ) )
+    while ( map.containsNode( nodeName ) )
     {
       nodeName = nodeName + UUID.randomUUID().toString().substring( 0, 6 );
     }
@@ -175,7 +175,7 @@ public class ListContentSplitPanel extends JSplitPane implements ActionListener,
     // Refer to ActionRouter.performAction(...), Then invoke GuiPackage.getInstance().updateCurrentGui(), then here
     UpdateTreeNodeNamebyDetailCardNameField();
     // set Sampler from GUI
-    Component[] comps = _detailPanel.getComponents();
+    Component[] comps = detailPanel.getComponents();
     MultipleHttpRequestsConfig wholeConfig = new MultipleHttpRequestsConfig();
     List<HttpRequestConfig> configs = new ArrayList<HttpRequestConfig>();
     for ( Component comp : comps )
@@ -200,13 +200,13 @@ public class ListContentSplitPanel extends JSplitPane implements ActionListener,
    */
   private void UpdateTreeNodeNamebyDetailCardNameField()
   {
-    if ( _listPanel == null || _listPanel.getTreePanel() == null || _listPanel.getTreePanel().getCurrentNode() == null )
+    if ( listPanel == null || listPanel.getTreePanel() == null || listPanel.getTreePanel().getCurrentNode() == null )
     {
       return;
     }
-    DefaultMutableTreeNode currentNode = _listPanel.getTreePanel().getCurrentNode();
+    DefaultMutableTreeNode currentNode = listPanel.getTreePanel().getCurrentNode();
     String oldName = currentNode.toString();
-    DetailCard lastPanel = _map.getRightPanelByTreeNodeName( oldName.toString() );
+    DetailCard lastPanel = map.getRightPanelByTreeNodeName( oldName.toString() );
 
     if ( lastPanel != null )
     {
@@ -217,7 +217,7 @@ public class ListContentSplitPanel extends JSplitPane implements ActionListener,
         newName = checkDupNodeName( newName );
         lastPanel.setNameField( newName );
         currentNode.setUserObject( newName );
-        _map.changeTreeNodeName( oldName, newName );
+        map.changeTreeNodeName( oldName, newName );
       }
     }
   }
@@ -226,11 +226,11 @@ public class ListContentSplitPanel extends JSplitPane implements ActionListener,
   public void configure( TestElement element )
   {
     clear();
-    _requestSeq = 1;
+    requestSeq = 1;
     MultipleHttpRequestsConfig wholeConfig = (MultipleHttpRequestsConfig) element.getProperty( CONFIG )
         .getObjectValue();
     List<HttpRequestConfig> configs = wholeConfig.getHttpRequestConfigAsList();
-    ListTree tree = _listPanel.getTreePanel();
+    ListTree tree = listPanel.getTreePanel();
 
     for ( HttpRequestConfig config : configs )
     {
@@ -239,16 +239,16 @@ public class ListContentSplitPanel extends JSplitPane implements ActionListener,
       tree.addObject( name );
       DetailCard card = addNewDetailCard( name );
       card.getUrlConfigPanel().configure( config.getUrlConfig() );
-      _map.add( name, name, card );
-      _requestSeq++;
+      map.add( name, name, card );
+      requestSeq++;
     }
   }
 
   public void clear()
   {
-    _listPanel.clear();
-    _detailPanel.removeAll();
-    _detailPanel.invalidate();
-    _map.clear();
+    listPanel.clear();
+    detailPanel.removeAll();
+    detailPanel.invalidate();
+    map.clear();
   }
 }
