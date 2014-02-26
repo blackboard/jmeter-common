@@ -60,7 +60,7 @@ public class ReadLineTest {
 			wrapFileReader.close();
 			createData(); // Create test data for readline function
 			ReadLine ln = setReadLineParams(new String("/Users/molague/work/jmeter-common/data.txt"), new String() );
-			System.out.println("file name is " + ln.getFileName());
+			//System.out.println("file name is " + ln.getFileName());
 			String s = ln.execute();
 			System.out.println(s);
 		}
@@ -82,7 +82,7 @@ public class ReadLineTest {
 			wrapFileReader.close();
 			createData();
 			ReadLine ln = setReadLineParams(new String(), new String());
-			System.out.println("file name is " + ln.getFileName());
+			//System.out.println("file name is " + ln.getFileName());
 			String s = ln.execute();
 			System.out.println(s);
 			
