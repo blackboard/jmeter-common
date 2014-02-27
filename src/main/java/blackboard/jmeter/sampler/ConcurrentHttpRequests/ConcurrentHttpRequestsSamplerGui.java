@@ -15,12 +15,26 @@ import org.apache.jmeter.testelement.TestElement;
 
 import blackboard.jmeter.sampler.ConcurrentHttpRequests.gui.ListContentSplitPanel;
 
+/**
+ * GUI class for Concurrent Http Requests Sampler The Sampler is to run multiple Http Requests Concurrently. 
+ * To keep the sub Http Request Samplers running independently: 
+ * JMeter Properties will be cloned to each sub sampler; 
+ * CookieManager is also cloned to each sampler, this also avoids ConcurrentModificationException while one sub request iterating the
+ * cookies and other changing the cookie. The issue may happen since we clone CookieManager to each sub sampler: any
+ * changes happened during the sub sampler won't be reflected to the Thread CookieManager. For example, if any sub
+ * sampler needs to add or update a cookie value, it only affects the cloned CookieManager, instead of the CookieManager
+ * for the JMeter Thread. 
+ * It would be ideal to merge sub sampler cookies back to the Thread cookieManager once all the
+ * sub samplers finish, but needs a merge strategy.
+ * 
+ * @author zyang
+ */
+
 public class ConcurrentHttpRequestsSamplerGui extends AbstractSamplerGui implements UnsharedComponent
 {
 
   private static final long serialVersionUID = -8825258141220885722L;
-  private static final String SAMPLER_LABEL = "jp@bb - Concurrent Http Requests Sampler";
-  private static final String SAMPLER_COMMENT = "Blackboard Concurrent Request Sampler.";
+  private static final String SAMPLER_LABEL = "Concurrent Http Requests Sampler";
   private ListContentSplitPanel splitPanel;
   private static final String ALL_PASS = "Passes if all sub-requests pass";
   private static final String ONE_PASS = "Passes if one sub-request passes";
@@ -71,7 +85,6 @@ public class ConcurrentHttpRequestsSamplerGui extends AbstractSamplerGui impleme
   {
     ConcurrentHttpRequestsSampler sampler = new ConcurrentHttpRequestsSampler();
     modifyTestElement( sampler );
-    sampler.setComment( SAMPLER_COMMENT );
     sampler.setProperty( Constants.RESULT_OPTION, Constants.ResultOption.ALLPASS.getOptionValue() );
 
     return sampler;

@@ -32,10 +32,18 @@ import blackboard.jmeter.sampler.ConcurrentHttpRequests.config.MultipleHttpReque
 import blackboard.jmeter.sampler.ConcurrentHttpRequests.gui.ListContentSplitPanel;
 
 /**
- * The Sampler to Run multiple Http Requests Concurrently This Sampler won't execute this sample method since it's
- * extending HTTPSamplerBase with the purpose of reusing the addTestElement method. This helps to make it easy passing
- * the properties to the sub request samplers.
+ * The Sampler to run multiple Http Requests Concurrently. 
+ * This Sampler extends HTTPSamplerBase, but actually it's not a HTTPSampler, instead, it contains multiple Http Samplers.
+ * The purpose to extend HTTPSamplerBase is to reuse the addTestElement method and the strategy for Global Managers and self assigned Managers. 
+ * Then we can directly pass all the JMeter Properties and Config Managers to the sub request samplers correctly.
+ * To keep the sub Http Request Samplers running independently:
+ * JMeter Properties will be cloned to each sub sampler;
+ * CookieManager is also cloned to each sampler, this also avoids ConcurrentModificationException while one sub request iterating the cookies and other changing the cookie.
+ * The issue may happen since we clone CookieManager to each sub sampler: any changes happened during the sub sampler won't be reflected to the Thread CookieManager.
+ * For example, if any sub sampler needs to add or update a cookie value, it only affects the cloned CookieManager, instead of the CookieManager for the JMeter Thread.
  * 
+ * It would be ideal to merge sub sampler cookies back to the Thread cookieManager once all the sub samplers finish, but needs a merge strategy.
+ *
  * @author zyang
  */
 public class ConcurrentHttpRequestsSampler extends HTTPSamplerBase implements Interruptible
