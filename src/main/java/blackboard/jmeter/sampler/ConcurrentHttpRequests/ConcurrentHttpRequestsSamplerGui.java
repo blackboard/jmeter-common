@@ -8,7 +8,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.apache.jmeter.gui.UnsharedComponent;
 import org.apache.jmeter.gui.util.HorizontalPanel;
 import org.apache.jmeter.samplers.gui.AbstractSamplerGui;
 import org.apache.jmeter.testelement.TestElement;
@@ -30,7 +29,7 @@ import blackboard.jmeter.sampler.ConcurrentHttpRequests.gui.ListContentSplitPane
  * @author zyang
  */
 
-public class ConcurrentHttpRequestsSamplerGui extends AbstractSamplerGui implements UnsharedComponent
+public class ConcurrentHttpRequestsSamplerGui extends AbstractSamplerGui
 {
 
   private static final long serialVersionUID = -8825258141220885722L;
