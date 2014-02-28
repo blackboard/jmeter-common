@@ -57,8 +57,8 @@
       <hashTree/>
       <CookieManager guiclass="CookiePanel" testclass="CookieManager" testname="HTTP Cookie Manager" enabled="true">
         <collectionProp name="CookieManager.cookies">
-          <elementProp name="cookie_test" elementType="Cookie" testname="cookie_test">
-            <stringProp name="Cookie.value">abc</stringProp>
+          <elementProp name="COOKIE_TEST" elementType="Cookie" testname="COOKIE_TEST">
+            <stringProp name="Cookie.value">COOKIE_TEST</stringProp>
             <stringProp name="Cookie.domain">${ip}</stringProp>
             <stringProp name="Cookie.path">/</stringProp>
             <boolProp name="Cookie.secure">true</boolProp>
@@ -355,6 +355,15 @@
             <stringProp name="TestPlan.comments">Blackboard Concurrent Request Sampler.</stringProp>
           </blackboard.jmeter.sampler.ConcurrentHttpRequests.ConcurrentHttpRequestsSampler>
           <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">HEADER_TEST</stringProp>
+                  <stringProp name="Header.value">HEARDER_TEST_VALUE</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
             <BSFPreProcessor guiclass="TestBeanGUI" testclass="BSFPreProcessor" testname="pre: set tab_tab_group_id" enabled="true">
               <stringProp name="scriptLanguage">javascript</stringProp>
               <stringProp name="parameters"></stringProp>
@@ -364,7 +373,7 @@
             <hashTree/>
             <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion - assert url using Global Http request Defaults and User Defined variables" enabled="true">
               <collectionProp name="Asserion.test_strings">
-                <stringProp name="767909670">${id}|${port}|${protocol}</stringProp>
+                <stringProp name="534273470">${protocol}://${ip}:${port}</stringProp>
               </collectionProp>
               <stringProp name="Assertion.test_field">Assertion.sample_label</stringProp>
               <boolProp name="Assertion.assume_success">false</boolProp>
@@ -376,35 +385,32 @@
               <stringProp name="BeanShellAssertion.query">import  org.apache.jmeter.samplers.SampleResult;
 
 SampleResult[] subs = prev.getSubResults() ; 
-counter = 1; 
+
 for(SampleResult sub: subs)
 {
 String response = sub.getResponseDataAsString();
 String samplerData =sub.getSamplerData();
 
-if(!samplerData.contains(&quot;cookie_test&quot;))
-{
+  if(!samplerData.contains(&quot;COOKIE_TEST&quot;))
+  {
 	Failure = true;
-	FailureMessage=&quot;request missing Cookie_test which is added from Global Cookie Manager!&quot;; 
+	FailureMessage=&quot;request missing COOKIE_TEST which is added from Global Cookie Manager!&quot;; 
      print(FailureMessage); 
-}
-if(!samplerData.contains(&quot;tab_tab_group_id=&quot;+vars.get(&quot;var_id&quot;)))
-{
-	log.info(&quot;**********************&quot;+vars.get(&quot;var_id&quot;));
+  }
+  if(!samplerData.contains(&quot;tab_tab_group_id=&quot;+vars.get(&quot;var_id&quot;)))
+  {
 	Failure = true;
 	FailureMessage=&quot;post data is wrong as to the tab_tab_group_id!&quot;; 
      print(FailureMessage); 
-}
-
-
-String requestHeaders = sub.getRequestHeaders();
-//Check the Global Header Manager and its own Header Manager
-if(!requestHeaders.contains(&quot;gzip, deflate&quot;))
-{
+  }
+  String requestHeaders = sub.getRequestHeaders();
+  //Check the Global Header Manager and its own Header Manager
+  if(!requestHeaders.contains(&quot;gzip, deflate&quot;)||!requestHeaders.contains(&quot;HEADER_TEST&quot;))
+  {
 	Failure = true;
-	FailureMessage=&quot;missing &apos;gzip, deflate&apos; in the sub request Headers!&quot;; 
+	FailureMessage=&quot;missing &apos;gzip, deflate&apos; or &apos;HEADER_TEST&apos; in the sub request Headers!&quot;; 
      print(FailureMessage); 
-}
+  }
 }</stringProp>
               <stringProp name="BeanShellAssertion.filename"></stringProp>
               <stringProp name="BeanShellAssertion.parameters"></stringProp>

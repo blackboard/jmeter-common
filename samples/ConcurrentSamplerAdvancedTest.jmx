@@ -218,34 +218,34 @@
               <stringProp name="BeanShellAssertion.query">import  org.apache.jmeter.samplers.SampleResult;
 
 SampleResult[] subs = prev.getSubResults() ; 
-counter = 1; 
+
 for(SampleResult sub: subs)
 {
-String response = sub.getResponseDataAsString();
-String samplerData =sub.getSamplerData();
-//Check Cookie Manager
-if(!samplerData.contains(&quot;cookie_test&quot;))
-{
+  String response = sub.getResponseDataAsString();
+  String samplerData =sub.getSamplerData();
+  //Check Cookie Manager
+  if(!samplerData.contains(&quot;cookie_test&quot;))
+  {
 	Failure = true;
 	FailureMessage=&quot;request missing cookie_test which is added from Global Cookie Manager!&quot;; 
      print(FailureMessage); 
-}
+  }
 
-//Check response data
-if(!response.contains(&quot;baidu&quot;)&amp;&amp;!response.contains(&quot;google&quot;))
-{
+  //Check response data
+  if(!response.contains(&quot;baidu&quot;)&amp;&amp;!response.contains(&quot;google&quot;))
+  {
 	Failure = true;
 	FailureMessage=&quot;Incorrect response text, missing baidu|google.!&quot;; 
      print(FailureMessage); 
-}
-String requestHeaders = sub.getRequestHeaders();
-//Check the Global Header Manager and its own Header Manager
-if(!requestHeaders.contains(&quot;a-header&quot;)||!requestHeaders.contains(&quot;gzip, deflate&quot;))
-{
+  }
+  String requestHeaders = sub.getRequestHeaders();
+  //Check the Global Header Manager and its own Header Manager
+  if(!requestHeaders.contains(&quot;a-header&quot;)||!requestHeaders.contains(&quot;gzip, deflate&quot;))
+  {
 	Failure = true;
 	FailureMessage=&quot;missing a-header or &apos;gzip, deflate&apos; in the sub request Headers!&quot;; 
      print(FailureMessage); 
-}
+  }
 }</stringProp>
               <stringProp name="BeanShellAssertion.filename"></stringProp>
               <stringProp name="BeanShellAssertion.parameters"></stringProp>
