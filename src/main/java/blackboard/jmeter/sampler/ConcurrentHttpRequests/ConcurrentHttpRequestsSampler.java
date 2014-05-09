@@ -55,15 +55,17 @@ public class ConcurrentHttpRequestsSampler extends HTTPSamplerBase implements In
   private static final String NON_HTTP_RESPONSE_MESSAGE = "Non HTTP response message";
 
   private static final String RESPONSE_MESSAGE_FORMAT = "Number of samples in transaction : %s, number of failing samples : %s";
-  private SampleResult result = new SampleResult();
 
+  ExecutorService executor;
+  JMeterContext jmeterContextOfParentThread;
   private static final Logger log = LoggingManager.getLoggerForClass();
-  private ExecutorService executor;
-  private JMeterContext jmeterContextOfParentThread;
 
   @Override
   public SampleResult sample( Entry arg0 )
   {
+    // result needs to be inside sample(...) method. Global class field can't work, that would make the result extended by thread loops.
+    SampleResult result = new SampleResult();
+
     // We must get Context here which will be used for the sub requests's variables replacement.
     // Early setting context to jmeterContextOfParentThread may miss the variable changes in the preprocessor
     jmeterContextOfParentThread = JMeterContextService.getContext();
@@ -92,7 +94,7 @@ public class ConcurrentHttpRequestsSampler extends HTTPSamplerBase implements In
         // Set sub request sampler's name, the name may override the one which passed in from parent Concurrent sampler
         sampler.setName( name );
         sampler.setEnabled( true );
-        Runnable worker = new HttpRequest( sampler );
+        Runnable worker = new HttpRequest( sampler, result );
         executor.execute( worker );
       }
       // This will make the executor accept no new threads
@@ -103,7 +105,7 @@ public class ConcurrentHttpRequestsSampler extends HTTPSamplerBase implements In
       executor.awaitTermination( 1000000, TimeUnit.MILLISECONDS );
       // result.sampleEnd() is unnecessary here because every call of result.addSubResult( result ) would extend the End Time.
       // Also calling result.sampleEnd() after result.addSubResult( result ) would report error "sampleEnd called twice java.lang.Throwable: Invalid call sequence"
-      processResult();
+      processResult(result);
     }
     catch ( Exception e )
     {
@@ -188,7 +190,7 @@ public class ConcurrentHttpRequestsSampler extends HTTPSamplerBase implements In
    * set the parent result according the subResults if there is any sub result failed, then the whole sample is
    * considered as "failed"
    */
-  private void processResult()
+  private void processResult(SampleResult result)
   {
     int failureNum = 0;
     result.setSuccessful( true );
@@ -220,18 +222,16 @@ public class ConcurrentHttpRequestsSampler extends HTTPSamplerBase implements In
 
   }
 
-  protected SampleResult getResult()
-  {
-    return result;
-  }
 
   class HttpRequest implements Runnable
   {
     private final HTTPSamplerBase sampler;
+    private final SampleResult parentResult;
 
-    HttpRequest( HTTPSamplerBase subSampler )
+    HttpRequest( HTTPSamplerBase subSampler, SampleResult result )
     {
       sampler = subSampler;
+      parentResult = result;
     }
 
     @Override
@@ -247,9 +247,9 @@ public class ConcurrentHttpRequestsSampler extends HTTPSamplerBase implements In
         context.setSamplingStarted( true );
         subResult = sampler.sample();
         // synchronized for the addSubResult method, since SampleResult.storeSubResult is not synchronized and may recreate the subResults Array by accident.
-        synchronized ( result )
+        synchronized ( parentResult )
         {
-          result.addSubResult( subResult );
+          parentResult.addSubResult( subResult );
         }
       }
       catch ( Exception e )
