@@ -45,11 +45,6 @@ jacocoTestReport {
   }
 }
 
-task integTest(type: Test) {
-   testClassesDir = sourceSets.integTest.output.classesDir
-   classpath = sourceSets.integTest.runtimeClasspath
-}
-
 uploadArchives {
   def nexusUsername = "$System.env.NEXUS_USERNAME".trim()
   def nexusPassword = "$System.env.NEXUS_PASSWORD".trim()

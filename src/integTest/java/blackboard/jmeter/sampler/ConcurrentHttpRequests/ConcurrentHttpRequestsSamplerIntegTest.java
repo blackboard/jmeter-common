@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.jmeter.protocol.http.sampler.HTTPSampler;
+import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.testelement.property.TestElementProperty;
 import org.apache.jmeter.util.JMeterUtils;
 import org.junit.Before;
@@ -46,17 +47,17 @@ public class ConcurrentHttpRequestsSamplerIntegTest
   public void testSampleAllPass()
   {
     sampler.setProperty( Constants.RESULT_OPTION, Constants.ResultOption.ALLPASS.getOptionValue() );
-    sampler.sample( null );
-    org.junit.Assert.assertEquals( 3, sampler.getResult().getSubResults().length );
-    org.junit.Assert.assertEquals( sampler.getResult().isSuccessful(), false );
+    SampleResult result = sampler.sample( null );
+    org.junit.Assert.assertEquals( 3, result.getSubResults().length );
+    org.junit.Assert.assertEquals( result.isSuccessful(), false );
   }
 
   @Test
   public void testSampleOnePass()
   {
     sampler.setProperty( Constants.RESULT_OPTION, Constants.ResultOption.ONEPASS.getOptionValue() );
-    sampler.sample( null );
-    org.junit.Assert.assertEquals( 3, sampler.getResult().getSubResults().length );
-    org.junit.Assert.assertEquals( sampler.getResult().isSuccessful(), true );
+    SampleResult result = sampler.sample( null );
+    org.junit.Assert.assertEquals( 3, result.getSubResults().length );
+    org.junit.Assert.assertEquals( result.isSuccessful(), true );
   }
 }
