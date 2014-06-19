@@ -4,7 +4,7 @@ apply plugin: 'maven'
 apply plugin: 'jacoco'
 group 'blackboard.perf'
 
-version = '1.0'
+version = '1.1-SNAPSHOT'
 
 
 repositories {  
@@ -51,8 +51,8 @@ uploadArchives {
 
   repositories {
     mavenDeployer {
-    //  repository ( url: 'http://maven.pd.local/content/repositories/snapshots' ) {
-        repository ( url: 'https://maven.blackboard.com/content/repositories/releases' ) {
+        repository ( url: 'http://maven.pd.local/content/repositories/snapshots' ) {
+      //  repository ( url: 'https://maven.blackboard.com/content/repositories/releases' ) {
         authentication ( userName: nexusUsername, password: nexusPassword )
       }
     }
