@@ -52,7 +52,7 @@ uploadArchives {
   repositories {
     mavenDeployer {
        // repository ( url: 'http://maven.pd.local/content/repositories/snapshots' ) {
-        repository ( url: 'http://maven.pd.local/content/groups/public' ) {
+        repository ( url: 'http://maven.pd.local/content/repositories/releases' ) {
       //  repository ( url: 'https://maven.blackboard.com/content/repositories/releases' ) {
         authentication ( userName: nexusUsername, password: nexusPassword )
       }
